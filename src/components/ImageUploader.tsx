@@ -1,6 +1,5 @@
-
 import React, { useCallback, useState, useRef } from 'react';
-import { Upload, Image as ImageIcon, Paste } from 'lucide-react';
+import { Upload, Image as ImageIcon, Clipboard } from 'lucide-react';
 import { useToast } from '../hooks/use-toast';
 
 interface ImageUploaderProps {
@@ -157,7 +156,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageUpload }) =
               onClick={handlePaste}
               className="flex items-center gap-2 px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-colors"
             >
-              <Paste className="w-5 h-5" />
+              <Clipboard className="w-5 h-5" />
               Paste Image
             </button>
           </div>
