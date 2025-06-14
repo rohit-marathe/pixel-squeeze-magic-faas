@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback } from 'react';
 import { ImageUploader } from '../components/ImageUploader';
 import { ImagePreview } from '../components/ImagePreview';
@@ -49,10 +48,15 @@ const Index = () => {
       const response = await fetch('http://13.52.190.63:31112/function/compress-image', {
         method: 'POST',
         body: formData,
+        mode: 'cors',
+        headers: {
+          'Accept': '*/*',
+        },
       });
       
       if (!response.ok) {
-        throw new Error(`Compression failed: ${response.statusText}`);
+        const errorText = await response.text().catch(() => 'Unknown error');
+        throw new Error(`Compression failed: ${response.status} ${response.statusText} - ${errorText}`);
       }
       
       const compressedBlob = await response.blob();
@@ -78,9 +82,22 @@ const Index = () => {
       
     } catch (error) {
       console.error('Compression error:', error);
+      
+      let errorMessage = "Please try again with a different image.";
+      
+      if (error instanceof Error) {
+        if (error.message.includes('Failed to fetch')) {
+          errorMessage = "Unable to connect to the compression server. Please check if the OpenFaaS server is running and accessible.";
+        } else if (error.message.includes('CORS')) {
+          errorMessage = "CORS error: The server needs to allow cross-origin requests from this domain.";
+        } else if (error.message.includes('NetworkError')) {
+          errorMessage = "Network error: Please check your internet connection and server availability.";
+        }
+      }
+      
       toast({
         title: "Compression failed",
-        description: "Please try again with a different image.",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
