@@ -45,13 +45,10 @@ const Index = () => {
       
       console.log('Sending image to OpenFaaS for compression...');
       
-      // Using CORS proxy temporarily - replace with your configured OpenFaaS URL once CORS is set up
-      const response = await fetch('https://cors-anywhere.herokuapp.com/http://13.52.190.63:31112/function/compress-image', {
+      // Using allorigins.win CORS proxy - works without authorization
+      const response = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent('http://13.52.190.63:31112/function/compress-image'), {
         method: 'POST',
         body: formData,
-        headers: {
-          'X-Requested-With': 'XMLHttpRequest',
-        },
       });
       
       if (!response.ok) {
