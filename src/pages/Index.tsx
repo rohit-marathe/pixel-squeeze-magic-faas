@@ -45,10 +45,11 @@ const Index = () => {
       
       console.log('Sending image to OpenFaaS for compression...');
       
-      // Using allorigins.win CORS proxy - works without authorization
-      const response = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent('http://13.52.190.63:31112/function/compress-image'), {
+      // Direct call to your OpenFaaS server
+      const response = await fetch('http://13.52.190.63:31112/function/compress-image', {
         method: 'POST',
         body: formData,
+        mode: 'cors',
       });
       
       if (!response.ok) {
@@ -83,12 +84,12 @@ const Index = () => {
       let errorMessage = "Please try again with a different image.";
       
       if (error instanceof Error) {
-        if (error.message.includes('Failed to fetch')) {
-          errorMessage = "Unable to connect to the compression server. Please check if the OpenFaaS server is running and accessible.";
+        if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+          errorMessage = "Unable to connect to your OpenFaaS server at http://13.52.190.63:31112. Please check if the server is running and accessible.";
         } else if (error.message.includes('CORS')) {
-          errorMessage = "CORS error: The server needs to allow cross-origin requests. Please configure CORS in your OpenFaaS function.";
-        } else if (error.message.includes('NetworkError')) {
-          errorMessage = "Network error: Please check your internet connection and server availability.";
+          errorMessage = "CORS error: Your OpenFaaS server needs to allow cross-origin requests. You may need to configure CORS in your OpenFaaS gateway or function.";
+        } else if (error.message.includes('502') || error.message.includes('503')) {
+          errorMessage = "OpenFaaS server error: The compress-image function may not be deployed or is not responding.";
         }
       }
       
