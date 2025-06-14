@@ -45,12 +45,12 @@ const Index = () => {
       
       console.log('Sending image to OpenFaaS for compression...');
       
-      const response = await fetch('http://13.52.190.63:31112/function/compress-image', {
+      // Using CORS proxy temporarily - replace with your configured OpenFaaS URL once CORS is set up
+      const response = await fetch('https://cors-anywhere.herokuapp.com/http://13.52.190.63:31112/function/compress-image', {
         method: 'POST',
         body: formData,
-        mode: 'cors',
         headers: {
-          'Accept': '*/*',
+          'X-Requested-With': 'XMLHttpRequest',
         },
       });
       
@@ -89,7 +89,7 @@ const Index = () => {
         if (error.message.includes('Failed to fetch')) {
           errorMessage = "Unable to connect to the compression server. Please check if the OpenFaaS server is running and accessible.";
         } else if (error.message.includes('CORS')) {
-          errorMessage = "CORS error: The server needs to allow cross-origin requests from this domain.";
+          errorMessage = "CORS error: The server needs to allow cross-origin requests. Please configure CORS in your OpenFaaS function.";
         } else if (error.message.includes('NetworkError')) {
           errorMessage = "Network error: Please check your internet connection and server availability.";
         }
