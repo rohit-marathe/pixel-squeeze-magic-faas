@@ -1,0 +1,11 @@
+provider:
+  name: openfaas
+  gateway: http://13.52.190.63:31112
+
+functions:
+  compress-image-node:
+    lang: node18
+    handler: compress-image-node
+    image: rohit-marathe/compress-image-node:latest
+    environment:
+      write_debug: true
